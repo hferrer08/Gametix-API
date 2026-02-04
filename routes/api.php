@@ -11,3 +11,4 @@ Route::get('/ping', function () {
 });
 
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
