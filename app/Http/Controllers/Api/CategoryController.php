@@ -37,4 +37,27 @@ class CategoryController extends Controller
             'activo' => $category->activo,
         ], 200);
     }
+
+    // RESTORE lógico: activo = 1 (true)
+    public function restore(int $id)
+    {
+        $category = Category::findOrFail($id);
+
+        if ($category->activo) {
+            return response()->json([
+                'message' => 'La categoria ya estaba activa',
+                'id' => $category->id,
+                'activo' => $category->activo,
+            ], 200);
+        }
+
+        $category->activo = true;
+        $category->save();
+
+        return response()->json([
+            'message' => 'Categoria reactivada correctamente',
+            'id' => $category->id,
+            'activo' => $category->activo,
+        ], 200);
+    }
 }
