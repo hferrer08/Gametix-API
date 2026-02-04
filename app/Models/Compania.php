@@ -19,4 +19,9 @@ class Compania extends Model
         'sitio_web',
         'activo',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'id_compania', 'id_compania');
+    }
 }

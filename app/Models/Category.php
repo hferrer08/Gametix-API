@@ -14,4 +14,9 @@ class Category extends Model
     protected $casts = [
         'activo' => 'boolean',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'category_id', 'id');
+    }
 }
