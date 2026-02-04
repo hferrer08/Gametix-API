@@ -48,6 +48,32 @@ class CategoryController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $category = Category::findOrFail($id);
+
+        $data = $request->validate([
+            'descripcion' => ['required', 'string', 'max:150'],
+            'activo' => ['nullable', 'boolean'], // opcional
+        ]);
+
+        // si no mandan activo, no lo tocamos
+        if (!array_key_exists('activo', $data)) {
+            unset($data['activo']);
+        }
+
+        $category->update($data);
+
+        return response()->json([
+            'message' => 'Categoria actualizada correctamente',
+            'data' => [
+                'id' => $category->id,
+                'descripcion' => $category->descripcion,
+                'activo' => $category->activo,
+            ],
+        ], 200);
+    }
+
     // DELETE lógico: activo = 0 (false)
     public function delete(int $id)
     {
