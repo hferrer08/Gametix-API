@@ -15,6 +15,15 @@ class CategoryController extends Controller
             ->get(['id', 'descripcion', 'activo']);
     }
 
+    public function getById(int $id)
+{
+    $category = Category::query()
+        ->select(['id', 'descripcion', 'activo'])
+        ->findOrFail($id);
+
+    return response()->json($category, 200);
+}
+
     // DELETE lógico: activo = 0 (false)
     public function delete(int $id)
     {
