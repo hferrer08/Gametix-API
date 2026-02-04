@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CompaniaController;
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -23,3 +24,6 @@ Route::put('/categories/{id}/restore', [CategoryController::class, 'restore']);
 //Compania Routes
 Route::apiResource('companias', CompaniaController::class);
 Route::post('companias/{id}/restore', [CompaniaController::class, 'restore']);
+
+//Product Routes
+Route::apiResource('products', ProductController::class);
