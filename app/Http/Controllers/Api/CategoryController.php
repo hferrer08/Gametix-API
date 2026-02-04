@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -16,13 +18,35 @@ class CategoryController extends Controller
     }
 
     public function getById(int $id)
-{
-    $category = Category::query()
-        ->select(['id', 'descripcion', 'activo'])
-        ->findOrFail($id);
+    {
+        $category = Category::query()
+            ->select(['id', 'descripcion', 'activo'])
+            ->findOrFail($id);
 
-    return response()->json($category, 200);
-}
+        return response()->json($category, 200);
+    }
+
+    public function create(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'descripcion' => ['required', 'string', 'max:150', 'unique:categories,descripcion'],
+            'activo' => ['nullable', 'boolean'],
+        ]);
+
+        // Si no viene activo, por defecto true
+        $data['activo'] = $data['activo'] ?? true;
+
+        $category = Category::create($data);
+
+        return response()->json([
+            'message' => 'Categoria creada correctamente',
+            'data' => [
+                'id' => $category->id,
+                'descripcion' => $category->descripcion,
+                'activo' => $category->activo,
+            ],
+        ], 201);
+    }
 
     // DELETE lógico: activo = 0 (false)
     public function delete(int $id)
