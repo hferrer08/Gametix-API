@@ -10,7 +10,7 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        Category::insert([
+        Category::firstOrCreate([
             [
                 'descripcion' => 'Juegos (Digital y Fisico)',
                 'activo' => true,
