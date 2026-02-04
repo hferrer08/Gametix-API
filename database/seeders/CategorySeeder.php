@@ -9,26 +9,19 @@ use App\Models\Category;
 class CategorySeeder extends Seeder
 {
     public function run(): void
-    {
-        Category::firstOrCreate([
-            [
-                'descripcion' => 'Juegos (Digital y Fisico)',
-                'activo' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'descripcion' => 'Consolas y Hardware',
-                'activo' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'descripcion' => 'Accesorios y Perifericos',
-                'activo' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+    { {
+            $categories = [
+                ['descripcion' => 'Juegos (Digital y Fisico)', 'activo' => true],
+                ['descripcion' => 'Consolas y Hardware', 'activo' => true],
+                ['descripcion' => 'Accesorios y Perifericos', 'activo' => true],
+            ];
+
+            foreach ($categories as $c) {
+                Category::firstOrCreate(
+                    ['descripcion' => $c['descripcion']], // criterio para no duplicar
+                    ['activo' => $c['activo']]
+                );
+            }
+        }
     }
 }

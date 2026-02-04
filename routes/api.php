@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CompaniaController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -18,3 +19,7 @@ Route::post('/categories', [CategoryController::class, 'create']);
 Route::put('/categories/{id}', [CategoryController::class, 'update']);
 Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
 Route::put('/categories/{id}/restore', [CategoryController::class, 'restore']);
+
+//Compania Routes
+Route::apiResource('companias', CompaniaController::class);
+Route::post('companias/{id}/restore', [CompaniaController::class, 'restore']);

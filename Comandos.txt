@@ -1,0 +1,56 @@
+=== SERVIDOR / PROYECTO ===
+php artisan serve // levanta el servidor local (http://127.0.0.1:8000)
+php artisan --version // muestra versión de Laravel
+php -v // muestra versión de PHP
+composer install // instala dependencias del proyecto
+composer update // actualiza dependencias
+composer dump-autoload // regenera autoload (útil si algo no reconoce clases)
+
+=== CACHE / CONFIG ===
+php artisan optimize:clear // limpia caches (config, routes, views, etc.) - el "apaga y prende" de Laravel
+php artisan config:clear // limpia cache de config
+php artisan route:clear // limpia cache de rutas
+php artisan view:clear // limpia cache de vistas
+
+=== MIGRACIONES ===
+php artisan migrate // ejecuta migraciones pendientes
+php artisan migrate:status // muestra estado de migraciones (qué corrió y qué no)
+php artisan migrate:rollback // revierte el último lote de migraciones
+php artisan migrate:reset // revierte todas las migraciones
+php artisan migrate:refresh // rollback + migrate (reconstruye sin borrar todo)
+php artisan migrate:fresh // borra todas las tablas y migra desde cero (DEV)
+php artisan migrate:fresh --seed // borra todo, migra y corre seeders (DEV full reset)
+
+php artisan make:migration create_companias_table // crea una migración nueva
+php artisan make:migration add_activo_to_companias_table // crea migración para alterar tabla existente
+
+=== SEEDERS / DATOS ===
+php artisan make:seeder CompaniaSeeder // crea un seeder
+php artisan db:seed // ejecuta DatabaseSeeder (los seeders registrados)
+php artisan db:seed --class=CompaniaSeeder // ejecuta un seeder específico
+
+=== MODELOS / CONTROLADORES / RECURSOS ===
+php artisan make:model Compania // crea modelo
+php artisan make:model Compania -m // crea modelo + migración
+php artisan make:model Compania -mcr // crea modelo + migración + controller + resource
+
+php artisan make:controller Api/CompaniaController --api // crea controller tipo API (index, show, store, update, destroy)
+php artisan make:request StoreCompaniaRequest // crea request para validación (FormRequest)
+php artisan make:resource CompaniaResource // crea resource para formatear respuestas JSON
+
+=== ROUTES / LISTADOS ===
+php artisan route:list // lista todas las rutas (muy útil para ver endpoints)
+php artisan route:list --path=api // lista solo rutas que contengan "api"
+
+=== TINKER (PROBAR MODELOS EN CONSOLA) ===
+php artisan tinker // abre consola interactiva para probar modelos/queries
+
+=== TESTING ===
+php artisan test // ejecuta tests
+php artisan make:test CompaniaTest // crea test
+
+=== COLA / JOBS / LOGS (por si más adelante) ===
+php artisan make:job EnviarCorreoJob // crea job
+php artisan queue:work // corre la cola de trabajos (si usas queues)
+php artisan make:command MiComando // crea comando personalizado
+tail -f storage/logs/laravel.log // ver logs en tiempo real (en bash/gitbash/wsl)
