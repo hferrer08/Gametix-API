@@ -23,7 +23,7 @@ class ProductController extends Controller
             ->get();
     }
 
-     public function show($id)
+    public function show($id)
     {
         return Product::query()
             ->with([
@@ -34,7 +34,7 @@ class ProductController extends Controller
     }
 
 
-     public function store(Request $request)
+    public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:150',
