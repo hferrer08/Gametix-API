@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CompaniaController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\ProveedorController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,3 +28,9 @@ Route::post('companias/{id}/restore', [CompaniaController::class, 'restore']);
 
 //Product Routes
 Route::apiResource('products', ProductController::class);
+
+//Proveedor Routes
+Route::apiResource('proveedores', ProveedorController::class);
+
+Route::patch('proveedores/{id}/desactivar', [ProveedorController::class, 'desactivar']);
+Route::patch('proveedores/{id}/activar', [ProveedorController::class, 'activar']);
