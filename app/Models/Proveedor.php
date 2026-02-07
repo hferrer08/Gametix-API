@@ -16,6 +16,16 @@ class Proveedor extends Model
         'activo',
     ];
 
+    public function products()
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'suministra',
+            'id_proveedor', // FK en suministra hacia proveedores
+            'product_id'    // FK en suministra hacia products
+        );
+    }
+
     protected $casts = [
         'activo' => 'boolean',
     ];

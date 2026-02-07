@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CompaniaController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\Api\ProveedorProductController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -34,3 +35,9 @@ Route::apiResource('proveedores', ProveedorController::class);
 
 Route::patch('proveedores/{id}/desactivar', [ProveedorController::class, 'desactivar']);
 Route::patch('proveedores/{id}/activar', [ProveedorController::class, 'activar']);
+
+// Rutas para gestionar la relación Proveedor-Product
+Route::get('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'index']);
+Route::post('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'store']);
+Route::delete('proveedores/{id_proveedor}/products/{product_id}', [ProveedorProductController::class, 'destroy']);
+Route::put('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'sync']);

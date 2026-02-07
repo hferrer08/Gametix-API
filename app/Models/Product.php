@@ -23,4 +23,14 @@ class Product extends Model
     {
         return $this->belongsTo(Compania::class, 'id_compania', 'id_compania');
     }
+
+    public function proveedores()
+{
+    return $this->belongsToMany(
+        Proveedor::class,
+        'suministra',
+        'product_id',    // FK en suministra hacia products
+        'id_proveedor'   // FK en suministra hacia proveedores
+    );
+}
 }
