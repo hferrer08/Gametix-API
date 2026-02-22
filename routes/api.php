@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MovimientoStockController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\DetallePedidoController;
+use App\Http\Controllers\PagoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -62,5 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('pedidos/{id_pedido}/detalles', [DetallePedidoController::class, 'store']);
     Route::put('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'update']);
     Route::delete('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'destroy']);
+    //Pago
+    Route::apiResource('pagos', PagoController::class);
 });
 

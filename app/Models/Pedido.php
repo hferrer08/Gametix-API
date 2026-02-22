@@ -13,7 +13,6 @@ class Pedido extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'fecha',
         'id_estado',
         'monto_total',
         'id_usuario',
