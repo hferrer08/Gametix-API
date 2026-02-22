@@ -20,4 +20,9 @@ class Carrito extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id');
     }
+
+    public function items()
+    {
+        return $this->hasMany(\App\Models\DetalleCarrito::class, 'id_carrito', 'id_carrito');
+    }
 }

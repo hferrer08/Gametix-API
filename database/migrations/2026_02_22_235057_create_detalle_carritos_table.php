@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('detalle_carrito', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_carrito');
+            $table->unsignedBigInteger('id_producto');
+            $table->unsignedInteger('cantidad');
+
+            // PK compuesta
+            $table->primary(['id_carrito', 'id_producto']);
+
+            // FK a carritos con CASCADE (PROPAGAR)
+            $table->foreign('id_carrito')
+                ->references('id_carrito')->on('carritos')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            // FK a products con CASCADE (PROPAGAR)
+            $table->foreign('id_producto')
+                ->references('id')->on('products')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('detalle_carrito');
+    }
+};
