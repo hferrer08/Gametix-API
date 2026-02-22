@@ -11,6 +11,7 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\DetallePedidoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ResenaController;
+use App\Http\Controllers\CarritoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -68,5 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('pagos', PagoController::class);
     //Reseña
     Route::apiResource('resenas', ResenaController::class);
+    //Carrito
+     Route::apiResource('carritos', CarritoController::class)->only(['index', 'store', 'show']);
 });
 
