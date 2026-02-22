@@ -43,6 +43,7 @@ Route::post('proveedores/{id_proveedor}/products', [ProveedorProductController::
 Route::delete('proveedores/{id_proveedor}/products/{product_id}', [ProveedorProductController::class, 'destroy']);
 Route::put('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'sync']);
 
+//Rutas Auth
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
 
