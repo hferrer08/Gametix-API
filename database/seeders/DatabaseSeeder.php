@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             CompaniaSeeder::class,
             ProductSeeder::class,
             ProveedorSeeder::class,
+            EstadoSeeder::class,
         ]);
     }
 }
