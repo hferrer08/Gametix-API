@@ -7,6 +7,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\Api\ProveedorProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MovimientoStockController;
+use App\Http\Controllers\PedidoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -53,5 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     //Movimiento stock
     Route::apiResource('movimiento-stock', MovimientoStockController::class);
+    //Pedido
+    Route::apiResource('pedidos', PedidoController::class);
 });
 
