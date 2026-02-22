@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CompaniaController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\Api\ProveedorProductController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -41,3 +42,11 @@ Route::get('proveedores/{id_proveedor}/products', [ProveedorProductController::c
 Route::post('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'store']);
 Route::delete('proveedores/{id_proveedor}/products/{product_id}', [ProveedorProductController::class, 'destroy']);
 Route::put('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'sync']);
+
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+});
