@@ -25,12 +25,22 @@ class Product extends Model
     }
 
     public function proveedores()
-{
-    return $this->belongsToMany(
-        Proveedor::class,
-        'suministra',
-        'product_id',    // FK en suministra hacia products
-        'id_proveedor'   // FK en suministra hacia proveedores
-    );
-}
+    {
+        return $this->belongsToMany(
+            Proveedor::class,
+            'suministra',
+            'product_id',    // FK en suministra hacia products
+            'id_proveedor'   // FK en suministra hacia proveedores
+        );
+    }
+
+    public function listasDeseos()
+    {
+        return $this->belongsToMany(
+            \App\Models\ListaDeseo::class,
+            'contiene',
+            'id_producto',
+            'id_lista'
+        )->withPivot('fecha_agregado');
+    }
 }

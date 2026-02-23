@@ -80,5 +80,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('carritos/{idCarrito}/items/{idProducto}', [DetalleCarritoController::class, 'destroy']);
     //Lista deseo
     Route::apiResource('lista-deseos', ListaDeseosController::class);
+    Route::post('lista-deseos/{id_lista}/productos',[ListaDeseosController::class, 'agregarProducto']);
+    Route::delete('lista-deseos/{id_lista}/productos/{id_producto}',[ListaDeseosController::class, 'quitarProducto']);
+    Route::get('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'productos']);
 });
 

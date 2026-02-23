@@ -21,4 +21,14 @@ class ListaDeseo extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id');
     }
+
+    public function productos()
+{
+    return $this->belongsToMany(
+        \App\Models\Product::class,
+        'contiene',
+        'id_lista',
+        'id_producto'
+    )->withPivot('fecha_agregado');
+}
 }

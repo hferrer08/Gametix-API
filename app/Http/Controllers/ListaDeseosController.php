@@ -17,7 +17,7 @@ class ListaDeseosController extends Controller
             ->get();
     }
 
- 
+
     public function store(Request $request)
     {
         $user = $request->user();
@@ -75,5 +75,51 @@ class ListaDeseosController extends Controller
 
         $lista->delete(); // cascada si hay hijos (cuando creemos items)
         return response()->json(['message' => 'Lista eliminada correctamente.'], 200);
+    }
+
+    public function agregarProducto(Request $request, $id_lista)
+    {
+        $user = $request->user();
+
+        $lista = ListaDeseo::where('id_lista', $id_lista)
+            ->where('id_usuario', $user->id)
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'id_producto' => ['required', 'integer', 'exists:products,id'],
+        ]);
+
+        $lista->productos()->syncWithoutDetaching([
+            $data['id_producto'] => []
+        ]);
+
+        return response()->json([
+            'message' => 'Producto agregado a la lista.'
+        ], 201);
+    }
+
+    public function quitarProducto(Request $request, $id_lista, $id_producto)
+    {
+        $user = $request->user();
+
+        $lista = ListaDeseo::where('id_lista', $id_lista)
+            ->where('id_usuario', $user->id)
+            ->firstOrFail();
+
+        $lista->productos()->detach($id_producto);
+
+        return response()->json([
+            'message' => 'Producto eliminado de la lista.'
+        ]);
+    }
+    public function productos($id_lista, Request $request)
+    {
+        $user = $request->user();
+
+        $lista = ListaDeseo::where('id_lista', $id_lista)
+            ->where('id_usuario', $user->id)
+            ->firstOrFail();
+
+        return $lista->productos;
     }
 }
