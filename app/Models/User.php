@@ -24,6 +24,11 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function listasDeseos()
+    {
+        return $this->hasMany(\App\Models\ListaDeseo::class, 'id_usuario', 'id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

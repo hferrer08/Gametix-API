@@ -13,6 +13,7 @@ use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\DetalleCarritoController;
+use App\Http\Controllers\ListaDeseosController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -77,5 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('carritos/{idCarrito}/items', [DetalleCarritoController::class, 'store']);
     Route::put('carritos/{idCarrito}/items/{idProducto}', [DetalleCarritoController::class, 'update']);
     Route::delete('carritos/{idCarrito}/items/{idProducto}', [DetalleCarritoController::class, 'destroy']);
+    //Lista deseo
+    Route::apiResource('lista-deseos', ListaDeseosController::class);
 });
 
