@@ -41,8 +41,11 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'website' => 'nullable|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'stock'  => ['nullable','integer','min:0'],
             'id_compania' => 'required|exists:companies,id_compania',
         ]);
+
+        $data['stock'] = $data['stock'] ?? 0;
 
         $product = Product::create($data);
 
