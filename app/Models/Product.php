@@ -11,6 +11,7 @@ class Product extends Model
         'description',
         'website',
         'stock',
+        'price',
         'category_id',
         'id_compania',
     ];

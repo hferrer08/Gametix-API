@@ -39,6 +39,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:150',
             'description' => 'nullable|string',
+            'price'  => ['nullable','integer','min:0'],
             'website' => 'nullable|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'stock'  => ['nullable','integer','min:0'],
@@ -46,6 +47,7 @@ class ProductController extends Controller
         ]);
 
         $data['stock'] = $data['stock'] ?? 0;
+        $data['price'] = $data['price'] ?? 0;
 
         $product = Product::create($data);
 
