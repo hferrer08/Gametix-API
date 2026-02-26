@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+
 
 
 class ProductController extends Controller
@@ -57,23 +59,47 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+{
+    $user = $request->user(); //viene del token
+
+    return DB::transaction(function () use ($request, $id, $user) {
+
+        // Bloquea fila para evitar carreras cuando se actualiza el precio
+        $product = Product::where('id', $id)->lockForUpdate()->firstOrFail();
 
         $data = $request->validate([
             'name' => 'sometimes|required|string|max:150',
             'description' => 'nullable|string',
+            'price'  => ['nullable','integer','min:0'],
             'website' => 'nullable|string|max:255',
             'category_id' => 'sometimes|required|exists:categories,id',
             'id_compania' => 'sometimes|required|exists:companies,id_compania',
         ]);
 
+        
+        $data['price'] = $data['price'] ?? 0;
+
+        $precioAnterior = (int) $product->price;
+        $precioNuevo    = (int) $data['price'];
+
+        // Actualiza producto
         $product->update($data);
+
+        // Si cambió el precio -> inserta histórico
+        if ($precioAnterior !== $precioNuevo) {
+            DB::table('historico_precios')->insert([
+                'id_producto' => $product->id,            
+                'precio'      => $precioNuevo,
+                'fecha'       => now(),
+                'id_usuario'  => $user->id,                
+            ]);
+        }
 
         return Product::query()
             ->with(['category:id,descripcion', 'company:id_compania,nombre'])
             ->findOrFail($product->id);
-    }
+    });
+}
 
     public function destroy($id)
     {
