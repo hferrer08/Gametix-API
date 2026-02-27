@@ -56,13 +56,17 @@ class ListaDeseosController extends Controller
             ->firstOrFail();
 
         $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:150'],
-            'descripcion' => ['nullable', 'string', 'max:2000'],
+            'nombre' => ['sometimes', 'string', 'max:150'],
+            'descripcion' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ]);
+
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
 
         $lista->update($data);
 
-        return $lista;
+        return response()->json($lista, 200);
     }
 
     public function destroy(Request $request, $id)

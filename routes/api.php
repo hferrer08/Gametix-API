@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoryController::class, 'create']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
+    Route::patch('/categories/{id}', [CategoryController::class, 'update']);
     Route::put('/categories/{id}/restore', [CategoryController::class, 'restore']);
 
     //Compania Routes
@@ -47,7 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Proveedor Routes
     Route::apiResource('proveedores', ProveedorController::class);
-
     Route::patch('proveedores/{id}/desactivar', [ProveedorController::class, 'desactivar']);
     Route::patch('proveedores/{id}/activar', [ProveedorController::class, 'activar']);
 
@@ -56,17 +56,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'store']);
     Route::delete('proveedores/{id_proveedor}/products/{product_id}', [ProveedorProductController::class, 'destroy']);
     Route::put('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'sync']);
+    Route::patch('proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'sync']);
 
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     //Movimiento stock
-    Route::apiResource('movimiento-stock', MovimientoStockController::class);
+    Route::apiResource('movimiento-stock', MovimientoStockController::class)->only(['index', 'store', 'show', 'destroy']);
     //Pedido
     Route::apiResource('pedidos', PedidoController::class);
     //Detalle Pedido
     Route::get('pedidos/{id_pedido}/detalles', [DetallePedidoController::class, 'index']);
     Route::post('pedidos/{id_pedido}/detalles', [DetallePedidoController::class, 'store']);
     Route::put('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'update']);
+    Route::patch('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'update']);
     Route::delete('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'destroy']);
     //Pago
     Route::apiResource('pagos', PagoController::class);
@@ -78,11 +80,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('carritos/{idCarrito}/items', [DetalleCarritoController::class, 'index']);
     Route::post('carritos/{idCarrito}/items', [DetalleCarritoController::class, 'store']);
     Route::put('carritos/{idCarrito}/items/{idProducto}', [DetalleCarritoController::class, 'update']);
+    Route::patch('carritos/{idCarrito}/items/{idProducto}', [DetalleCarritoController::class, 'update']);
     Route::delete('carritos/{idCarrito}/items/{idProducto}', [DetalleCarritoController::class, 'destroy']);
     //Lista deseo
     Route::apiResource('lista-deseos', ListaDeseosController::class);
     Route::post('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'agregarProducto']);
     Route::delete('lista-deseos/{id_lista}/productos/{id_producto}', [ListaDeseosController::class, 'quitarProducto']);
     Route::get('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'productos']);
+    
 });
 

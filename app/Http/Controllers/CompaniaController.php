@@ -39,10 +39,14 @@ class CompaniaController extends Controller
         $compania = Compania::findOrFail($id);
 
         $data = $request->validate([
-            'nombre' => ['sometimes', 'required', 'string', 'max:150'],
-            'descripcion' => ['nullable', 'string', 'max:500'],
-            'sitio_web' => ['nullable', 'string', 'max:255'],
+            'nombre' => ['sometimes', 'string', 'max:150'],
+            'descripcion' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'sitio_web' => ['sometimes', 'nullable', 'string', 'max:255'],
         ]);
+
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
 
         $compania->update($data);
 

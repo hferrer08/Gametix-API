@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ProveedorProductController extends Controller
 {
-     // GET /api/proveedores/{id_proveedor}/products
+    // GET /api/proveedores/{id_proveedor}/products
     public function index($id_proveedor)
     {
         $proveedor = Proveedor::findOrFail($id_proveedor);
@@ -45,13 +45,19 @@ class ProveedorProductController extends Controller
     public function sync(Request $request, $id_proveedor)
     {
         $data = $request->validate([
-            'product_ids' => ['required', 'array'],
+            'product_ids' => ['sometimes', 'array'],
             'product_ids.*' => ['integer', 'exists:products,id'],
         ]);
 
+        if (!array_key_exists('product_ids', $data)) {
+            return response()->json(['message' => 'No se enviaron product_ids para sincronizar'], 422);
+        }
+
         $proveedor = Proveedor::findOrFail($id_proveedor);
+
+        // reemplaza la relación completa por el array enviado
         $proveedor->products()->sync($data['product_ids']);
 
-        return response()->json(['message' => 'Productos sincronizados.']);
+        return response()->json(['message' => 'Productos sincronizados.'], 200);
     }
 }

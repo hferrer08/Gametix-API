@@ -53,25 +53,6 @@ class MovimientoStockController extends Controller
     {
         return $movimientoStock;
     }
-
-    public function update(Request $request, MovimientoStock $movimientoStock)
-    {
-        $data = $request->validate([
-            'tipo_movimiento' => ['sometimes', 'string', 'in:ENTRADA,SALIDA'],
-            'cantidad'        => ['sometimes', 'integer', 'min:1'],
-            'fecha'           => ['sometimes', 'date'],
-            'id_producto' => ['sometimes', 'integer', 'exists:products,id'],
-        ]);
-
-        // opcional: si quieres registrar quién modificó:
-        // se deje para el futuro
-        // $data['id_usuario'] = $request->user()->id_usuario ?? $request->user()->id;
-
-        $movimientoStock->update($data);
-
-        return $movimientoStock;
-    }
-
     public function destroy(MovimientoStock $movimientoStock)
     {
         $movimientoStock->delete();

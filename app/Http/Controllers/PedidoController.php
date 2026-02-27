@@ -45,20 +45,24 @@ class PedidoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $pedido = Pedido::findOrFail($id);
-
-        if ($pedido->id_usuario !== auth()->id()) {
-            return response()->json(['message' => 'No autorizado'], 403);
-        }
+        // Trae solo pedidos del usuario autenticado (evita ver pedidos ajenos)
+        $pedido = Pedido::where('id_pedido', $id)
+            ->where('id_usuario', auth()->id())
+            ->firstOrFail();
 
         $data = $request->validate([
             'id_estado' => ['sometimes', 'integer', 'exists:estados,id_estado'],
             'monto_total' => ['sometimes', 'numeric', 'min:0'],
         ]);
 
+        // PATCH vacío -> error
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
+
         $pedido->update($data);
 
-        return response()->json($pedido);
+        return response()->json($pedido, 200);
     }
 
     public function destroy($id)

@@ -81,6 +81,10 @@ class DetallePedidoController extends Controller
             'precio_unitario' => ['sometimes', 'numeric', 'min:0'],
         ]);
 
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
+
         DB::transaction(function () use ($id_pedido, $id_producto, $data) {
             $detalle = DetallePedido::where('id_pedido', $id_pedido)
                 ->where('id_producto', $id_producto)

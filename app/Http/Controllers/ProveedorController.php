@@ -35,14 +35,18 @@ class ProveedorController extends Controller
         $prov = Proveedor::findOrFail($id);
 
         $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:150'],
-            'descripcion' => ['nullable', 'string'],
-            'sitio_web' => ['nullable', 'string', 'max:255'],
+            'nombre' => ['sometimes', 'string', 'max:150'],
+            'descripcion' => ['sometimes', 'nullable', 'string'],
+            'sitio_web' => ['sometimes', 'nullable', 'string', 'max:255'],
         ]);
+
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
 
         $prov->update($data);
 
-        return $prov;
+        return response()->json($prov, 200);
     }
 
     // SoftDelete: solo se marca como inactivo, no se borra de la base de datos

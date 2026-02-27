@@ -62,19 +62,26 @@ class DetalleCarritoController extends Controller
             ->firstOrFail();
 
         $data = $request->validate([
-            'cantidad' => ['required', 'integer', 'min:1'],
+            'cantidad' => ['sometimes', 'integer', 'min:1'],
         ]);
+
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
 
         $item = DetalleCarrito::where('id_carrito', $carrito->id_carrito)
             ->where('id_producto', $idProducto)
             ->firstOrFail();
 
-        $item->cantidad = $data['cantidad'];
+        // solo si viene cantidad
+        if (array_key_exists('cantidad', $data)) {
+            $item->cantidad = $data['cantidad'];
+        }
+
         $item->save();
 
-        return $item;
+        return response()->json($item, 200);
     }
-
     // Quitar item del carrito
     public function destroy(Request $request, $idCarrito, $idProducto)
     {

@@ -45,7 +45,7 @@ class ResenaController extends Controller
 
         $resena = Resena::findOrFail($id);
 
-        //Solo el dueño puede editar su reseña
+        // Solo el dueño puede editar su reseña
         if ($resena->id_usuario !== $user->id) {
             return response()->json([
                 'message' => 'No autorizado para modificar esta reseña.'
@@ -54,12 +54,16 @@ class ResenaController extends Controller
 
         $data = $request->validate([
             'puntuacion' => ['sometimes', 'integer', 'between:1,5'],
-            'comentario' => ['nullable', 'string', 'max:2000'],
+            'comentario' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ]);
+
+        if (empty($data)) {
+            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        }
 
         $resena->update($data);
 
-        return response()->json($resena);
+        return response()->json($resena, 200);
     }
 
     public function destroy(Request $request, $id)

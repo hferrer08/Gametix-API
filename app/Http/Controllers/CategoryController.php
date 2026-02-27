@@ -53,13 +53,15 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         $data = $request->validate([
-            'descripcion' => ['required', 'string', 'max:150'],
-            'activo' => ['nullable', 'boolean'], // opcional
+            'descripcion' => ['sometimes', 'string', 'max:150', 'unique:categories,descripcion,' . $category->id],
+            'activo' => ['sometimes', 'boolean'],
         ]);
 
-        // si no mandan activo, no lo tocamos
-        if (!array_key_exists('activo', $data)) {
-            unset($data['activo']);
+        // opcional: si no mandan nada, responde bonito
+        if (empty($data)) {
+            return response()->json([
+                'message' => 'No se enviaron campos para actualizar',
+            ], 422);
         }
 
         $category->update($data);
