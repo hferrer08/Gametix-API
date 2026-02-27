@@ -9,21 +9,21 @@ class PedidoController extends Controller
 {
     public function index()
     {
-        // Estado y usuario
-        //Sólo pedidos del usuario autenticado
         return Pedido::with(['estado', 'usuario'])
             ->where('id_usuario', auth()->id())
+            ->where('activo', true)
+            ->latest('id_pedido')
             ->get();
     }
 
     public function show($id)
     {
-        $pedido = Pedido::with(['estado', 'usuario'])->findOrFail($id);
 
-        // Asegurar que no vea pedidos ajenos (userId del token)
-        if ($pedido->id_usuario !== auth()->id()) {
-            return response()->json(['message' => 'No autorizado'], 403);
-        }
+        $pedido = Pedido::with(['estado', 'usuario'])
+            ->where('id_pedido', $id)
+            ->where('id_usuario', auth()->id()) 
+            ->where('activo', true)
+            ->firstOrFail();
 
         return response()->json($pedido);
     }
@@ -36,7 +36,7 @@ class PedidoController extends Controller
         ]);
 
         $data['id_usuario'] = auth()->id(); // viene del token
-
+        $data['activo'] = true;            
 
         $pedido = Pedido::create($data);
 
@@ -45,17 +45,18 @@ class PedidoController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Trae solo pedidos del usuario autenticado (evita ver pedidos ajenos)
+        // Solo del usuario + solo activos
         $pedido = Pedido::where('id_pedido', $id)
             ->where('id_usuario', auth()->id())
+            ->where('activo', true)
             ->firstOrFail();
 
         $data = $request->validate([
             'id_estado' => ['sometimes', 'integer', 'exists:estados,id_estado'],
             'monto_total' => ['sometimes', 'numeric', 'min:0'],
+            'activo' => ['sometimes', 'boolean'], //
         ]);
 
-        // PATCH vacío -> error
         if (empty($data)) {
             return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
         }
@@ -67,15 +68,33 @@ class PedidoController extends Controller
 
     public function destroy($id)
     {
-        $pedido = Pedido::findOrFail($id);
+       
+        $pedido = Pedido::where('id_pedido', $id)
+            ->where('id_usuario', auth()->id())
+            ->where('activo', true)
+            ->firstOrFail();
 
-        // Sólo el dueño puede eliminar
-        if ($pedido->id_usuario !== auth()->id()) {
-            return response()->json(['message' => 'No autorizado'], 403);
-        }
+       
+        $pedido->activo = false;
+        $pedido->save();
 
-        $pedido->delete();
+        $pedido->delete(); 
 
-        return response()->json(['message' => 'Pedido eliminado']);
+        return response()->json(['message' => 'Pedido eliminado (soft delete)']);
     }
+
+    public function restore($id)
+    {
+        $pedido = Pedido::onlyTrashed()
+            ->where('id_pedido', $id)
+            ->where('id_usuario', auth()->id())
+            ->firstOrFail();
+
+        $pedido->restore();
+        $pedido->activo = true;
+        $pedido->save();
+
+        return response()->json(['message' => 'Pedido restaurado']);
+    }
+
 }

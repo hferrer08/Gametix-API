@@ -63,9 +63,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     //Movimiento stock
     Route::apiResource('movimiento-stock', MovimientoStockController::class)->only(['index', 'store', 'show', 'destroy']);
-    //Pedido
+    // Pedido
     Route::apiResource('pedidos', PedidoController::class);
-    //Detalle Pedido
+    Route::post('pedidos/{id}/restore', [PedidoController::class, 'restore']); // opcional
+
+    // Detalle Pedido
     Route::get('pedidos/{id_pedido}/detalles', [DetallePedidoController::class, 'index']);
     Route::post('pedidos/{id_pedido}/detalles', [DetallePedidoController::class, 'store']);
     Route::put('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'update']);
