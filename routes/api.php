@@ -14,6 +14,7 @@ use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\DetalleCarritoController;
 use App\Http\Controllers\ListaDeseosController;
+use App\Http\Controllers\EstadoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -87,6 +88,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'agregarProducto']);
     Route::delete('lista-deseos/{id_lista}/productos/{id_producto}', [ListaDeseosController::class, 'quitarProducto']);
     Route::get('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'productos']);
-    
+    //Estados
+    Route::get('/estados', [EstadoController::class, 'index']);
+    Route::delete('/estados/{id_estado}', [EstadoController::class, 'destroy']);
+    Route::patch('/estados/{id_estado}/reactivar', [EstadoController::class, 'reactivar']);
 });
 
