@@ -88,6 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'agregarProducto']);
     Route::delete('lista-deseos/{id_lista}/productos/{id_producto}', [ListaDeseosController::class, 'quitarProducto']);
     Route::get('lista-deseos/{id_lista}/productos', [ListaDeseosController::class, 'productos']);
+    Route::post('lista-deseos/{id}/restore', [ListaDeseosController::class, 'restore']);
     //Estados
     Route::get('/estados', [EstadoController::class, 'index']);
     Route::delete('/estados/{id_estado}', [EstadoController::class, 'destroy']);

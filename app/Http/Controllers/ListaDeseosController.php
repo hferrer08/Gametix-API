@@ -31,6 +31,7 @@ class ListaDeseosController extends Controller
             'id_usuario' => $user->id,
             'nombre' => $data['nombre'],
             'descripcion' => $data['descripcion'] ?? null,
+            'activo' => 1,
         ]);
 
         return response()->json($lista, 201);
@@ -77,7 +78,11 @@ class ListaDeseosController extends Controller
             ->where('id_usuario', $user->id)
             ->firstOrFail();
 
-        $lista->delete(); // cascada si hay hijos (cuando creemos items)
+        // limpiar pivot
+        $lista->productos()->detach();
+
+        $lista->delete();
+
         return response()->json(['message' => 'Lista eliminada correctamente.'], 200);
     }
 
@@ -125,5 +130,19 @@ class ListaDeseosController extends Controller
             ->firstOrFail();
 
         return $lista->productos;
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $user = $request->user();
+
+        $lista = ListaDeseo::onlyTrashed()
+            ->where('id_lista', $id)
+            ->where('id_usuario', $user->id)
+            ->firstOrFail();
+
+        $lista->restore(); // deleted_at NULL + ACTIVO=1 (por evento del modelo)
+
+        return response()->json(['message' => 'Lista restaurada correctamente.'], 200);
     }
 }
