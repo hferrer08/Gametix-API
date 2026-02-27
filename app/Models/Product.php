@@ -14,7 +14,18 @@ class Product extends Model
         'price',
         'category_id',
         'id_compania',
+        'activo',
     ];
+
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
+
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true);
+    }
+
 
     public function category()
     {

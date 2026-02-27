@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index()
     {
         // Trae id category y company, y además el nombre de cada una
-        return Product::query()
+        return Product::activos()
             ->with([
                 'category:id,descripcion',
                 'company:id_compania,nombre',
@@ -27,7 +27,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        return Product::query()
+       return Product::activos()
             ->with([
                 'category:id,descripcion',
                 'company:id_compania,nombre',
@@ -36,7 +36,7 @@ class ProductController extends Controller
     }
 
 
-    public function store(Request $request)
+  public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:150',
@@ -46,10 +46,12 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'stock' => ['nullable', 'integer', 'min:0'],
             'id_compania' => 'required|exists:companies,id_compania',
+
         ]);
 
         $data['stock'] = $data['stock'] ?? 0;
         $data['price'] = $data['price'] ?? 0;
+        $data['activo'] = $data['activo'] ?? true;
 
         $product = Product::create($data);
 
@@ -64,8 +66,11 @@ class ProductController extends Controller
 
         return DB::transaction(function () use ($request, $id, $user) {
 
-            // Bloquea fila para evitar carreras cuando se actualiza el precio
-            $product = Product::where('id', $id)->lockForUpdate()->firstOrFail();
+            // Bloquea SOLO si está activo (si está inactivo, 404)
+            $product = Product::where('id', $id)
+                ->where('activo', true)
+                ->lockForUpdate()
+                ->firstOrFail();
 
             $data = $request->validate([
                 'name' => ['sometimes', 'string', 'max:150'],
@@ -83,10 +88,8 @@ class ProductController extends Controller
 
             $precioAnterior = (int) $product->price;
 
-            // Actualiza producto (solo lo que venga)
             $product->update($data);
 
-            // Si mandaron price y cambió -> inserta histórico
             if (array_key_exists('price', $data)) {
                 $precioNuevo = (int) $product->price;
 
@@ -108,10 +111,30 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
+        // Soft delete
         $product = Product::findOrFail($id);
-        $product->delete();
 
-        return response()->json(['message' => 'Product deleted']);
+        if (!$product->activo) {
+            return response()->json(['message' => 'El producto ya está desactivado.'], 200);
+        }
+
+        $product->update(['activo' => false]);
+
+        return response()->json(['message' => 'Producto desactivado.'], 200);
+    }
+
+    // Restaurar producto
+    public function restore($id)
+    {
+        $product = Product::findOrFail($id);
+
+        if ($product->activo) {
+            return response()->json(['message' => 'El producto ya está activo.'], 200);
+        }
+
+        $product->update(['activo' => true]);
+
+        return response()->json(['message' => 'Producto reactivado.'], 200);
     }
 
 }

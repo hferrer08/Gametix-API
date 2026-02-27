@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Product Routes
     Route::apiResource('products', ProductController::class);
+    Route::patch('products/{id}/restore', [ProductController::class, 'restore']);
 
     //Proveedor Routes
     Route::apiResource('proveedores', ProveedorController::class);
