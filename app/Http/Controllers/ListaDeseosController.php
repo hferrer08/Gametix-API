@@ -12,9 +12,40 @@ class ListaDeseosController extends Controller
     {
         $user = $request->user();
 
-        return ListaDeseo::where('id_usuario', $user->id)
-            ->orderByDesc('id_lista')
-            ->get();
+        $data = $request->validate([
+            'q' => ['nullable', 'string', 'max:200'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $q = $data['q'] ?? null;
+
+        $query = ListaDeseo::query()
+            ->where('id_usuario', $user->id)
+            ->where('activo', true)
+            ->orderByDesc('id_lista');
+
+        // Filtros opcionales
+        if ($q) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('descripcion', 'like', "%{$q}%");
+            });
+        }
+
+        // Paginación opcional
+        $wantsPagination = $request->has('limit') || $request->has('page');
+
+        if ($wantsPagination) {
+            $limit = max(1, min((int) ($data['limit'] ?? 10), 100));
+
+            return response()->json(
+                $query->paginate($limit)->appends($request->query()),
+                200
+            );
+        }
+
+        return response()->json($query->get(), 200);
     }
 
 
