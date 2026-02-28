@@ -172,15 +172,6 @@ Content-Type: application/json
 
 ------------------------------------------------------------------------
 
-# 📈 Próximas Mejoras
-
--   Documentación Swagger / OpenAPI\
--   Versionado de API (/api/v1)\
--   Tests de integración\
--   Roles y permisos\
--   CI/CD
-
-------------------------------------------------------------------------
 
 # 👨‍💻 Autores
 
