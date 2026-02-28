@@ -30,6 +30,10 @@ Route::get('/ping', function () {
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
 
+//Product Routes
+    Route::apiResource('products', ProductController::class);
+    Route::patch('products/{id}/restore', [ProductController::class, 'restore']);
+
 Route::middleware('auth:sanctum')->group(function () {
     //Category Routes
     Route::get('/categories', [CategoryController::class, 'index']);
@@ -42,11 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Compania Routes
     Route::apiResource('companias', CompaniaController::class);
-    Route::post('companias/{id}/restore', [CompaniaController::class, 'restore']);
-
-    //Product Routes
-    Route::apiResource('products', ProductController::class);
-    Route::patch('products/{id}/restore', [ProductController::class, 'restore']);
+    Route::post('companias/{id}/restore', [CompaniaController::class, 'restore']);    
 
     //Proveedor Routes
     Route::apiResource('proveedores', ProveedorController::class);
