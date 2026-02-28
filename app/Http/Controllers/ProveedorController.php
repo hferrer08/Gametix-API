@@ -7,9 +7,47 @@ use Illuminate\Http\Request;
 
 class ProveedorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Proveedor::orderBy('nombre')->get();
+        $data = $request->validate([
+            'q' => ['nullable', 'string', 'max:200'],
+            'activo' => ['nullable'], // 1/0 true/false
+            'page' => ['nullable', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        // Por defecto: solo activos
+        $activo = $request->has('activo')
+            ? filter_var($request->query('activo'), FILTER_VALIDATE_BOOLEAN)
+            : true;
+
+        $query = Proveedor::query()
+            ->where('activo', $activo)
+            ->orderBy('nombre');
+
+        // Búsqueda opcional
+        if (!empty($data['q'])) {
+            $q = $data['q'];
+            $query->where(function ($sub) use ($q) {
+                $sub->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('descripcion', 'like', "%{$q}%")
+                    ->orWhere('sitio_web', 'like', "%{$q}%");
+            });
+        }
+
+        // Paginación opcional
+        $wantsPagination = $request->has('limit') || $request->has('page');
+
+        if ($wantsPagination) {
+            $limit = max(1, min((int) ($data['limit'] ?? 10), 100));
+
+            return response()->json(
+                $query->paginate($limit)->appends($request->query()),
+                200
+            );
+        }
+
+        return response()->json($query->get(), 200);
     }
 
     public function store(Request $request)
