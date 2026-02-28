@@ -10,7 +10,7 @@ class ProductImagesSeeder extends Seeder
     public function run(): void
     {
         $imagenes = [
-            'EA Sports FC 26 (PS5)' => 'https://commons.wikimedia.org/wiki/Special:FilePath/FC_26_Logo.svg',
+            'EA Sports FC 26 (PS5)' => 'https://rimage.ripley.cl/home.ripley/Attachment/WOP/1/2000408286592/full_image-2000408286592',
             'Call of Duty: Modern Warfare III' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Call_of_Duty_MWIII.jpg',
             'Minecraft (Digital)' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Minecraft_Key-art.png',
             'PlayStation 5 Slim' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Playstation_5_mod%C3%A8le_slim_%28%C3%A9dition_standard_avec_lecteur_de_disque_amovible.png',
