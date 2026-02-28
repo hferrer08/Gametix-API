@@ -78,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('pagos', PagoController::class);
     //Reseña
     Route::apiResource('resenas', ResenaController::class);
+    Route::post('resenas/{id}/restore', [ResenaController::class, 'restore']);
     //Carrito
     Route::apiResource('carritos', CarritoController::class)->only(['index', 'store', 'show']);
     //Detalle Carrito (items)

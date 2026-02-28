@@ -14,15 +14,23 @@ class ResenaController extends Controller
             'id_producto' => ['nullable', 'integer'],
             'id_usuario' => ['nullable', 'integer'],
             'puntuacion' => ['nullable', 'integer', 'between:1,5'],
-            'desde' => ['nullable', 'date'],                 // YYYY-MM-DD
-            'hasta' => ['nullable', 'date'],                 // YYYY-MM-DD
+            'desde' => ['nullable', 'date'], // YYYY-MM-DD
+            'hasta' => ['nullable', 'date'], // YYYY-MM-DD
+            'activo' => ['nullable'],        // 1/0 true/false (opcional)
             'page' => ['nullable', 'integer', 'min:1'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
 
+        // Base query
         $query = Resena::query()
             ->with(['producto', 'usuario'])
             ->latest('id_resena');
+
+        // Si viene activo, quitamos el GlobalScope para poder listar inactivos también
+        if ($request->has('activo')) {
+            $activo = filter_var($request->query('activo'), FILTER_VALIDATE_BOOLEAN);
+            $query->withoutGlobalScope('activo')->where('activo', $activo);
+        }
 
         // Filtros opcionales
         if (!empty($data['id_producto'])) {
@@ -45,13 +53,15 @@ class ResenaController extends Controller
             $query->whereDate('fecha', '<=', $data['hasta']);
         }
 
-        // Búsqueda opcional (comentario)
+        // Búsqueda opcional (comentario o nombre del producto)
         if (!empty($data['q'])) {
             $q = $data['q'];
-            $query->where('comentario', 'like', "%{$q}%");
 
-            // Por nombre del producto:
-            $query->orWhereHas('producto', fn($p) => $p->where('name','like',"%{$q}%"));
+            // Agrupar con where(...) 
+            $query->where(function ($sub) use ($q) {
+                $sub->where('comentario', 'like', "%{$q}%")
+                    ->orWhereHas('producto', fn ($p) => $p->where('name', 'like', "%{$q}%"));
+            });
         }
 
         // Paginación opcional
@@ -81,9 +91,10 @@ class ResenaController extends Controller
 
         $resena = Resena::create([
             'id_producto' => $data['id_producto'],
-            'id_usuario' => $user->id, // usamos el ID del usuario autenticado (token)
+            'id_usuario' => $user->id,
             'puntuacion' => $data['puntuacion'],
             'comentario' => $data['comentario'] ?? null,
+            'activo' => true,
         ]);
 
         return response()->json($resena, 201);
@@ -91,6 +102,7 @@ class ResenaController extends Controller
 
     public function show($id)
     {
+        // show por defecto solo activos 
         return Resena::with(['producto', 'usuario'])->findOrFail($id);
     }
 
@@ -101,7 +113,7 @@ class ResenaController extends Controller
         $resena = Resena::findOrFail($id);
 
         // Solo el dueño puede editar su reseña
-        if ($resena->id_usuario !== $user->id) {
+        if ((int)$resena->id_usuario !== (int)$user->id) {
             return response()->json([
                 'message' => 'No autorizado para modificar esta reseña.'
             ], 403);
@@ -121,19 +133,50 @@ class ResenaController extends Controller
         return response()->json($resena, 200);
     }
 
+    // DELETE => soft delete lógico (activo = 0)
     public function destroy(Request $request, $id)
     {
         $user = $request->user();
-        $resena = Resena::findOrFail($id);
 
-        if ($resena->id_usuario !== $user->id) {
+        // Aunque ya esté inactiva 
+        $resena = Resena::withoutGlobalScope('activo')->findOrFail($id);
+
+        if ((int)$resena->id_usuario !== (int)$user->id) {
             return response()->json([
                 'message' => 'No autorizado para eliminar esta reseña.'
             ], 403);
         }
 
-        $resena->delete();
+        if ($resena->activo === false) {
+            return response()->json(['message' => 'La reseña ya estaba eliminada.'], 200);
+        }
 
-        return response()->json(['message' => 'Reseña eliminada.']);
+        $resena->activo = false;
+        $resena->save();
+
+        return response()->json(['message' => 'Reseña eliminada (soft delete).'], 200);
+    }
+
+    // RESTORE => activo = 1
+    public function restore(Request $request, $id)
+    {
+        $user = $request->user();
+
+        $resena = Resena::withoutGlobalScope('activo')->findOrFail($id);
+
+        if ((int)$resena->id_usuario !== (int)$user->id) {
+            return response()->json([
+                'message' => 'No autorizado para restaurar esta reseña.'
+            ], 403);
+        }
+
+        if ($resena->activo === true) {
+            return response()->json(['message' => 'La reseña ya estaba activa.'], 200);
+        }
+
+        $resena->activo = true;
+        $resena->save();
+
+        return response()->json(['message' => 'Reseña restaurada.'], 200);
     }
 }
