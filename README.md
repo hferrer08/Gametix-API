@@ -1,58 +1,195 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎮 Gametix-API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST desarrollada con **Laravel 12 + Sanctum + MySQL (Docker/Sail)**
+para un sistema tipo e-commerce enfocado en gestión de productos,
+proveedores, stock, pedidos, carrito y lista de deseos.
 
-## About Laravel
+Este proyecto forma parte del proceso formativo del Máster en Desarrollo
+Web (VIU) y está diseñado bajo buenas prácticas REST, autenticación por
+token y arquitectura modular.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+------------------------------------------------------------------------
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# 🚀 Tecnologías Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   PHP \^8.2
+-   Laravel 12
+-   Laravel Sanctum (Autenticación por token)
+-   MySQL 8 (Docker)
+-   Laravel Sail
+-   Redis (incluido en Sail)
+-   Docker Compose
 
-## Learning Laravel
+------------------------------------------------------------------------
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# 🔗 Integración con Frontend
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Esta API se conecta con el frontend desarrollado en Angular:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+👉 https://github.com/jotaefepece/VIU-Gametix-Frontend
 
-## Agentic Development
+El frontend consume los endpoints REST protegidos por Sanctum y gestiona
+autenticación, carrito, pedidos y catálogo de productos.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+------------------------------------------------------------------------
 
-```bash
-composer require laravel/boost --dev
+# 📦 Instalación (Laravel Sail)
 
-php artisan boost:install
-```
+## 1️⃣ Clonar repositorio
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+git clone https://github.com/hferrer08/Gametix-API.git cd Gametix-API
 
-## Contributing
+## 2️⃣ Copiar archivo .env
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+cp .env.example .env
 
-## Code of Conduct
+Configurar base de datos para Sail:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+DB_CONNECTION=mysql\
+DB_HOST=mysql\
+DB_PORT=3306\
+DB_DATABASE=gametix\
+DB_USERNAME=sail\
+DB_PASSWORD=password
 
-## Security Vulnerabilities
+## 3️⃣ Instalar dependencias
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+composer install
 
-## License
+## 4️⃣ Levantar entorno Docker
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+./vendor/bin/sail up -d
+
+## 5️⃣ Generar key y migrar
+
+./vendor/bin/sail artisan key:generate\
+./vendor/bin/sail artisan migrate
+
+## 6️⃣ (Opcional) Seeders
+
+./vendor/bin/sail artisan db:seed
+
+Base URL API: http://localhost/api
+
+------------------------------------------------------------------------
+
+# 🔐 Autenticación (Sanctum)
+
+## Registro
+
+POST /api/auth/register
+
+## Login
+
+POST /api/auth/login
+
+## Usuario autenticado
+
+GET /api/me
+
+## Logout
+
+POST /api/auth/logout
+
+Headers requeridos:
+
+Authorization: Bearer `<TOKEN>`{=html}\
+Accept: application/json\
+Content-Type: application/json
+
+------------------------------------------------------------------------
+
+# 🧩 Módulos Principales
+
+## Categorías
+
+/api/categories
+
+## Compañías
+
+/api/companias
+
+## Productos
+
+/api/products
+
+## Proveedores
+
+/api/proveedores
+
+## Movimiento de Stock
+
+/api/movimiento-stock
+
+## Pedidos + Detalles
+
+/api/pedidos\
+/api/pedidos/{id}/detalles
+
+## Pagos
+
+/api/pagos
+
+## Reseñas
+
+/api/resenas
+
+## Carrito + Items
+
+/api/carritos\
+/api/carritos/{id}/items
+
+## Lista de Deseos
+
+/api/lista-deseos\
+/api/lista-deseos/{id}/productos
+
+## Estados
+
+/api/estados
+
+------------------------------------------------------------------------
+
+# 🧠 Características Implementadas
+
+✔ CRUD completos\
+✔ Relaciones muchos a muchos (Proveedor ↔ Producto)\
+✔ Manejo de stock mediante movimientos\
+✔ Carrito persistente por usuario\
+✔ Pedidos con detalle\
+✔ Soft delete y reactivación en múltiples módulos\
+✔ Autenticación basada en token\
+✔ Endpoints protegidos con auth:sanctum
+
+------------------------------------------------------------------------
+
+# 🧪 Comandos Útiles
+
+./vendor/bin/sail artisan route:list\
+./vendor/bin/sail artisan migrate\
+./vendor/bin/sail artisan optimize:clear\
+./vendor/bin/sail artisan test
+
+------------------------------------------------------------------------
+
+# 📈 Próximas Mejoras
+
+-   Documentación Swagger / OpenAPI\
+-   Versionado de API (/api/v1)\
+-   Tests de integración\
+-   Roles y permisos\
+-   CI/CD
+
+------------------------------------------------------------------------
+
+# 👨‍💻 Autores
+
+-   Hubert Ferrer 
+-   José Poblete
+-   Eduardo Criollo
+
+------------------------------------------------------------------------
+
+# 📄 Licencia
+
+Proyecto académico con fines educativos.
