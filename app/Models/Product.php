@@ -10,6 +10,7 @@ class Product extends Model
         'name',
         'description',
         'website',
+        'imagen_url',
         'stock',
         'price',
         'category_id',
