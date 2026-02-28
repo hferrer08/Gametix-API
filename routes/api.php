@@ -32,12 +32,16 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 
 //Product Routes
     Route::apiResource('products', ProductController::class);
-    Route::patch('products/{id}/restore', [ProductController::class, 'restore']);
+
+//Category Routes
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{id}', [CategoryController::class, 'show']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
+        Route::patch('products/{id}/restore', [ProductController::class, 'restore']);
     //Category Routes
-    Route::get('/categories', [CategoryController::class, 'index']);
-    Route::get('/categories/{id}', [CategoryController::class, 'getById']);
+
     Route::post('/categories', [CategoryController::class, 'create']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
