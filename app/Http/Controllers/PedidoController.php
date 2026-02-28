@@ -7,13 +7,71 @@ use App\Models\Pedido;
 
 class PedidoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Pedido::with(['estado', 'usuario'])
-            ->where('id_usuario', auth()->id())
+        $userId = $request->user()->id; // o auth()->id()
+
+        $data = $request->validate([
+            'q' => ['nullable', 'string', 'max:200'],
+            'id_estado' => ['nullable', 'integer'],
+            'desde' => ['nullable', 'date'],                 // YYYY-MM-DD
+            'hasta' => ['nullable', 'date'],                 // YYYY-MM-DD
+            'min' => ['nullable', 'numeric', 'min:0'],
+            'max' => ['nullable', 'numeric', 'min:0'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $query = Pedido::query()
+            ->with(['estado', 'usuario'])
+            ->where('id_usuario', $userId)
             ->where('activo', true)
-            ->latest('id_pedido')
-            ->get();
+            ->latest('id_pedido');
+
+        // Filtros opcionales
+        if (!empty($data['id_estado'])) {
+            $query->where('id_estado', $data['id_estado']);
+        }
+
+        if (!empty($data['desde'])) {
+            $query->whereDate('fecha', '>=', $data['desde']);
+        }
+
+        if (!empty($data['hasta'])) {
+            $query->whereDate('fecha', '<=', $data['hasta']);
+        }
+
+        if (isset($data['min'])) {
+            $query->where('monto_total', '>=', $data['min']);
+        }
+
+        if (isset($data['max'])) {
+            $query->where('monto_total', '<=', $data['max']);
+        }
+
+        // Búsqueda libre opcional
+        if (!empty($data['q'])) {
+            $qtxt = $data['q'];
+            $query->where(function ($sub) use ($qtxt) {
+                $sub->where('id_pedido', 'like', "%{$qtxt}%")
+                    ->orWhere('monto_total', 'like', "%{$qtxt}%");
+              
+            });
+        }
+
+        // Paginación opcional
+        $wantsPagination = $request->has('limit') || $request->has('page');
+
+        if ($wantsPagination) {
+            $limit = max(1, min((int) ($data['limit'] ?? 10), 100));
+
+            return response()->json(
+                $query->paginate($limit)->appends($request->query()),
+                200
+            );
+        }
+
+        return response()->json($query->get(), 200);
     }
 
     public function show($id)
@@ -21,7 +79,7 @@ class PedidoController extends Controller
 
         $pedido = Pedido::with(['estado', 'usuario'])
             ->where('id_pedido', $id)
-            ->where('id_usuario', auth()->id()) 
+            ->where('id_usuario', auth()->id())
             ->where('activo', true)
             ->firstOrFail();
 
@@ -36,7 +94,7 @@ class PedidoController extends Controller
         ]);
 
         $data['id_usuario'] = auth()->id(); // viene del token
-        $data['activo'] = true;            
+        $data['activo'] = true;
 
         $pedido = Pedido::create($data);
 
@@ -68,17 +126,17 @@ class PedidoController extends Controller
 
     public function destroy($id)
     {
-       
+
         $pedido = Pedido::where('id_pedido', $id)
             ->where('id_usuario', auth()->id())
             ->where('activo', true)
             ->firstOrFail();
 
-       
+
         $pedido->activo = false;
         $pedido->save();
 
-        $pedido->delete(); 
+        $pedido->delete();
 
         return response()->json(['message' => 'Pedido eliminado (soft delete)']);
     }
