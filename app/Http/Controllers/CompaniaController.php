@@ -8,12 +8,43 @@ use Illuminate\Http\Request;
 
 class CompaniaController extends Controller
 {
-    public function index()
-    {
+    public function index(Request $request)
+{
+    $data = $request->validate([
+        'q'     => ['nullable', 'string', 'max:200'],
+        'page'  => ['nullable', 'integer', 'min:1'],
+        'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+    ]);
+
+    $q = $data['q'] ?? null;
+
+    $query = Compania::query()
+        ->where('activo', true)
+        ->orderByDesc('id_compania');
+
+    //Búsqueda opcional (nombre/descripcion/sitio_web)
+    if ($q) {
+        $query->where(function ($sub) use ($q) {
+            $sub->where('nombre', 'like', "%{$q}%")
+                ->orWhere('descripcion', 'like', "%{$q}%")
+                ->orWhere('sitio_web', 'like', "%{$q}%");
+        });
+    }
+
+    //Si viene limit o page => paginar. Si no => devolver todo.
+    $wantsPagination = $request->has('limit') || $request->has('page');
+
+    if ($wantsPagination) {
+        $limit = max(1, min((int)($data['limit'] ?? 10), 100));
+
         return response()->json(
-            Compania::orderBy('id_compania', 'desc')->get()
+            $query->paginate($limit)->appends($request->query()),
+            200
         );
     }
+
+    return response()->json($query->get(), 200);
+}
 
     public function show(int $id)
     {
