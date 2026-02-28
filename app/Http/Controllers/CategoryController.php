@@ -9,12 +9,34 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Category::query()
+        $data = $request->validate([
+            'q' => ['nullable', 'string', 'max:200'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $q = $data['q'] ?? null;
+
+        $query = Category::query()
             ->where('activo', true)
             ->orderBy('descripcion')
-            ->get(['id', 'descripcion', 'activo']);
+            ->select(['id', 'descripcion', 'activo']);
+
+        // filtro opcional
+        if ($q) {
+            $query->where('descripcion', 'like', "%{$q}%");
+        }
+
+        $wantsPagination = $request->has('limit') || $request->has('page');
+
+        if ($wantsPagination) {
+            $limit = max(1, min((int) ($data['limit'] ?? 10), 100));
+            return $query->paginate($limit)->appends($request->query());
+        }
+
+        return $query->get();
     }
 
     public function getById(int $id)
