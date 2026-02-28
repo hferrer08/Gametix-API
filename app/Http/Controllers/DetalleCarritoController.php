@@ -62,23 +62,24 @@ class DetalleCarritoController extends Controller
             ->firstOrFail();
 
         $data = $request->validate([
-            'cantidad' => ['sometimes', 'integer', 'min:1'],
+            'cantidad' => ['required', 'integer', 'min:1'],
         ]);
 
-        if (empty($data)) {
-            return response()->json(['message' => 'No se enviaron campos para actualizar'], 422);
+        $affected = DetalleCarrito::where('id_carrito', $carrito->id_carrito)
+            ->where('id_producto', $idProducto)
+            ->update([
+                'cantidad' => $data['cantidad'],
+            ]);
+
+        if ($affected === 0) {
+            return response()->json(['message' => 'Item no encontrado'], 404);
         }
 
+        // Devolver el item actualizado con producto incluido
         $item = DetalleCarrito::where('id_carrito', $carrito->id_carrito)
             ->where('id_producto', $idProducto)
-            ->firstOrFail();
-
-        // solo si viene cantidad
-        if (array_key_exists('cantidad', $data)) {
-            $item->cantidad = $data['cantidad'];
-        }
-
-        $item->save();
+            ->with('producto')
+            ->first();
 
         return response()->json($item, 200);
     }
