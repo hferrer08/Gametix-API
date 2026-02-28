@@ -11,23 +11,84 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        // Trae id category y company, y además el nombre de cada una
-        return Product::activos()
+        $data = $request->validate([
+            'q' => ['nullable', 'string', 'max:200'],
+            'category_id' => ['nullable', 'integer'],
+            'id_compania' => ['nullable', 'integer'],
+            'min_price' => ['nullable', 'numeric', 'min:0'],
+            'max_price' => ['nullable', 'numeric', 'min:0'],
+            'in_stock' => ['nullable'], // true/false | 1/0
+
+            'page' => ['nullable', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $query = Product::activos()
             ->with([
                 'category:id,descripcion',
                 'company:id_compania,nombre',
             ])
-            ->get();
+            ->orderByDesc('id'); 
+
+        // Filtro por texto (opcional)
+        if (!empty($data['q'])) {
+            $q = $data['q'];
+            $query->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%")
+                    ->orWhere('website', 'like', "%{$q}%");
+            });
+        }
+
+        // Filtros opcionales por FK
+        if (!empty($data['category_id'])) {
+            $query->where('category_id', $data['category_id']);
+        }
+
+        if (!empty($data['id_compania'])) {
+            $query->where('id_compania', $data['id_compania']);
+        }
+
+        // Rango de precio opcional
+        if (isset($data['min_price'])) {
+            $query->where('price', '>=', $data['min_price']);
+        }
+
+        if (isset($data['max_price'])) {
+            $query->where('price', '<=', $data['max_price']);
+        }
+
+        // Stock opcional
+        if ($request->has('in_stock')) {
+            $inStock = filter_var($request->query('in_stock'), FILTER_VALIDATE_BOOLEAN);
+            if ($inStock) {
+                $query->where('stock', '>', 0);
+            } else {
+                $query->where('stock', '<=', 0);
+            }
+        }
+
+        // Paginación opcional
+        $wantsPagination = $request->has('limit') || $request->has('page');
+
+        if ($wantsPagination) {
+            $limit = max(1, min((int) ($data['limit'] ?? 10), 100));
+
+            return response()->json(
+                $query->paginate($limit)->appends($request->query()),
+                200
+            );
+        }
+
+        return response()->json($query->get(), 200);
     }
 
     public function show($id)
     {
-       return Product::activos()
+        return Product::activos()
             ->with([
                 'category:id,descripcion',
                 'company:id_compania,nombre',
@@ -36,7 +97,7 @@ class ProductController extends Controller
     }
 
 
-  public function store(Request $request)
+    public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:150',
