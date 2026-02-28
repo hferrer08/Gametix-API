@@ -7,16 +7,71 @@ use App\Models\Resena;
 
 class ResenaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Resena::with(['producto', 'usuario'])
-            ->latest('id_resena')
-            ->get();
+        $data = $request->validate([
+            'q' => ['nullable', 'string', 'max:200'],
+            'id_producto' => ['nullable', 'integer'],
+            'id_usuario' => ['nullable', 'integer'],
+            'puntuacion' => ['nullable', 'integer', 'between:1,5'],
+            'desde' => ['nullable', 'date'],                 // YYYY-MM-DD
+            'hasta' => ['nullable', 'date'],                 // YYYY-MM-DD
+            'page' => ['nullable', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $query = Resena::query()
+            ->with(['producto', 'usuario'])
+            ->latest('id_resena');
+
+        // Filtros opcionales
+        if (!empty($data['id_producto'])) {
+            $query->where('id_producto', $data['id_producto']);
+        }
+
+        if (!empty($data['id_usuario'])) {
+            $query->where('id_usuario', $data['id_usuario']);
+        }
+
+        if (!empty($data['puntuacion'])) {
+            $query->where('puntuacion', $data['puntuacion']);
+        }
+
+        if (!empty($data['desde'])) {
+            $query->whereDate('fecha', '>=', $data['desde']);
+        }
+
+        if (!empty($data['hasta'])) {
+            $query->whereDate('fecha', '<=', $data['hasta']);
+        }
+
+        // Búsqueda opcional (comentario)
+        if (!empty($data['q'])) {
+            $q = $data['q'];
+            $query->where('comentario', 'like', "%{$q}%");
+
+            // Por nombre del producto:
+            $query->orWhereHas('producto', fn($p) => $p->where('name','like',"%{$q}%"));
+        }
+
+        // Paginación opcional
+        $wantsPagination = $request->has('limit') || $request->has('page');
+
+        if ($wantsPagination) {
+            $limit = max(1, min((int) ($data['limit'] ?? 10), 100));
+
+            return response()->json(
+                $query->paginate($limit)->appends($request->query()),
+                200
+            );
+        }
+
+        return response()->json($query->get(), 200);
     }
 
     public function store(Request $request)
     {
-        $user = $request->user(); // 👈 Usuario autenticado por token
+        $user = $request->user(); // Usuario autenticado por token
 
         $data = $request->validate([
             'id_producto' => ['required', 'integer', 'exists:products,id'],
