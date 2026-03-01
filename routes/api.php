@@ -79,7 +79,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'update']);
     Route::delete('pedidos/{id_pedido}/detalles/{id_producto}', [DetallePedidoController::class, 'destroy']);
     //Pago
-    Route::apiResource('pagos', PagoController::class);
+    // Solo consultar y realizar pagos
+    Route::apiResource('pagos', PagoController::class)->only(['index', 'show']);
     //Reseña
     Route::apiResource('resenas', ResenaController::class);
     Route::post('resenas/{id}/restore', [ResenaController::class, 'restore']);
