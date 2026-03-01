@@ -48,6 +48,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 2,
                 'id_compania' => 1,
                 'stock' => 700,
+                'price' => 100000,
             ],
             [
                 'name' => 'Xbox Series X',
@@ -56,6 +57,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 2,
                 'id_compania' => 2,
                 'stock' => 1000,
+                 'price' => 70000,
             ],
             [
                 'name' => 'Nintendo Switch OLED',
@@ -64,6 +66,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 2,
                 'id_compania' => 3,
                 'stock' => 700,
+                 'price' => 50000,
             ],
 
             // Category 3: Accesorios y Periféricos
@@ -74,6 +77,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 3,
                 'id_compania' => 1,
                 'stock' => 700,
+                 'price' => 100000,
             ],
             [
                 'name' => 'Headset Gamer (Estéreo)',
@@ -82,6 +86,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 3,
                 'id_compania' => 2,
                 'stock' => 800,
+                 'price' => 50000,
             ],
             [
                 'name' => 'Pro Controller (Switch)',
@@ -90,6 +95,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 3,
                 'id_compania' => 3,
                 'stock' => 200,
+                 'price' => 30000,
             ],
         ];
 
