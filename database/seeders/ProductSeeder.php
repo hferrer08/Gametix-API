@@ -21,6 +21,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.ea.com',
                 'category_id' => 1,
                 'id_compania' => 1,
+                'stock' => 1000,
             ],
             [
                 'name' => 'Call of Duty: Modern Warfare III',
@@ -28,6 +29,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.callofduty.com',
                 'category_id' => 1,
                 'id_compania' => 2,
+                'stock' => 500,
             ],
             [
                 'name' => 'Minecraft (Digital)',
@@ -35,6 +37,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.minecraft.net',
                 'category_id' => 1,
                 'id_compania' => 3,
+                'stock' => 700,
             ],
 
             // Category 2: Consolas y Hardware
@@ -44,6 +47,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.playstation.com',
                 'category_id' => 2,
                 'id_compania' => 1,
+                'stock' => 700,
             ],
             [
                 'name' => 'Xbox Series X',
@@ -51,6 +55,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.xbox.com',
                 'category_id' => 2,
                 'id_compania' => 2,
+                'stock' => 1000,
             ],
             [
                 'name' => 'Nintendo Switch OLED',
@@ -58,6 +63,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.nintendo.com',
                 'category_id' => 2,
                 'id_compania' => 3,
+                'stock' => 700,
             ],
 
             // Category 3: Accesorios y Periféricos
@@ -67,6 +73,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.playstation.com',
                 'category_id' => 3,
                 'id_compania' => 1,
+                'stock' => 700,
             ],
             [
                 'name' => 'Headset Gamer (Estéreo)',
@@ -74,6 +81,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.xbox.com',
                 'category_id' => 3,
                 'id_compania' => 2,
+                'stock' => 800,
             ],
             [
                 'name' => 'Pro Controller (Switch)',
@@ -81,6 +89,7 @@ class ProductSeeder extends Seeder
                 'website' => 'https://www.nintendo.com',
                 'category_id' => 3,
                 'id_compania' => 3,
+                'stock' => 200,
             ],
         ];
 
