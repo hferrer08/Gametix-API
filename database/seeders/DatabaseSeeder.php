@@ -34,6 +34,15 @@ class DatabaseSeeder extends Seeder
             EstadoSeeder::class,
             RoleSeeder::class,
             AssignAdminRoleSeeder::class,
+            ListaDeseosSeeder::class,
+            ContieneSeeder::class,
+            CarritoSeeder::class,
+            DetalleCarritoSeeder::class,
+            PedidosSeeder::class,
+            DetallePedidoSeeder::class,
+            MovimientoStockSeeder::class,
+            PagosSeeder::class,
+            ResenaSeeder::class,
         ]);
     }
 }
