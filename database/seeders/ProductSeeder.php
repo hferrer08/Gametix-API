@@ -22,6 +22,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 1,
                 'id_compania' => 1,
                 'stock' => 1000,
+                'price' => 25000,
             ],
             [
                 'name' => 'Call of Duty: Modern Warfare III',
@@ -30,6 +31,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 1,
                 'id_compania' => 2,
                 'stock' => 500,
+                'price' => 50000,
             ],
             [
                 'name' => 'Minecraft (Digital)',
@@ -38,6 +40,7 @@ class ProductSeeder extends Seeder
                 'category_id' => 1,
                 'id_compania' => 3,
                 'stock' => 700,
+                'price' => 50000,
             ],
 
             // Category 2: Consolas y Hardware
