@@ -29,6 +29,18 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\ListaDeseo::class, 'id_usuario', 'id');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(\App\Models\Role::class, 'role_user')
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at'); // Solo roles asignados activos
+    }
+
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()->where('name', $roleName)->exists();
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

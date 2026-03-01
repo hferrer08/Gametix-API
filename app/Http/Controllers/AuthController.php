@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -28,12 +29,14 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         $token = $user->createToken('api')->plainTextToken;
+        $roles = $user->roles()->pluck('name'); // ["admin", "user"]
 
         return response()->json([
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'roles' => $roles,
             ],
             'token' => $token,
         ]);
@@ -41,7 +44,14 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return response()->json($request->user());
+       $user = $request->user();
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->roles()->pluck('name'), 
+        ]);
     }
 
     public function logout(Request $request)
@@ -65,6 +75,12 @@ class AuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        // ASIGNAR ROL POR DEFECTO "user"
+        $roleUser = Role::where('name', 'user')->first();
+        if ($roleUser) {
+            $user->roles()->syncWithoutDetaching([$roleUser->id]);
+        }
+
         $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
@@ -72,6 +88,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'roles' => $user->roles()->pluck('name'), 
             ],
             'token' => $token,
         ], 201);
