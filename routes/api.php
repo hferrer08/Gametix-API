@@ -42,6 +42,9 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Reseñas (público: lectura)
 Route::apiResource('resenas', ResenaController::class)->only(['index', 'show']);
 
+//Compañías (público: catálogo)
+Route::apiResource('companias', CompaniaController::class)->only(['index', 'show']); 
+
 
 /* 2) RUTAS AUTENTICADAS (token requerido) */
 Route::middleware('auth:sanctum')->group(function () {
@@ -90,6 +93,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/estados/{id_estado}', [EstadoController::class, 'destroy']);
     Route::patch('/estados/{id_estado}/reactivar', [EstadoController::class, 'reactivar']);
 
+     // Movimiento stock 
+        Route::apiResource('movimiento-stock', MovimientoStockController::class)->only(['index', 'store', 'show', 'destroy']);
+
 
     /* 3) RUTAS SOLO ADMIN (auth + role:admin) */
     Route::middleware('role:admin')->group(function () {
@@ -105,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/categories/{id}/restore', [CategoryController::class, 'restore']);
 
         // Compañías 
-        Route::apiResource('companias', CompaniaController::class);
+        Route::apiResource('companias', CompaniaController::class)->except(['index', 'show']); 
         Route::post('companias/{id}/restore', [CompaniaController::class, 'restore']);
 
         // Proveedores 
@@ -119,8 +125,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('proveedores/{id_proveedor}/products/{product_id}', [ProveedorProductController::class, 'destroy']);
         Route::match(['put', 'patch'], 'proveedores/{id_proveedor}/products', [ProveedorProductController::class, 'sync']);
 
-        // Movimiento stock 
-        Route::apiResource('movimiento-stock', MovimientoStockController::class)
-            ->only(['index', 'store', 'show', 'destroy']);
+       
     });
 });
