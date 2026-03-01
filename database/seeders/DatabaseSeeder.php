@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
     ); */
 
         $this->call([
+            UserSeeder::class,
             CategorySeeder::class,
             CompaniaSeeder::class,
             ProductSeeder::class,
@@ -43,6 +44,7 @@ class DatabaseSeeder extends Seeder
             MovimientoStockSeeder::class,
             PagosSeeder::class,
             ResenaSeeder::class,
+            
         ]);
     }
 }
