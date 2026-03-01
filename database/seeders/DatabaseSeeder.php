@@ -17,13 +17,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::firstOrCreate(
+        /* User::firstOrCreate(
         ['email' => 'test@example.com'], // criterio único
         [
             'name' => 'Test User',
             'password' => bcrypt('password'), // o Hash::make('password')
         ]
-    );
+    ); */
 
         $this->call([
             CategorySeeder::class,
