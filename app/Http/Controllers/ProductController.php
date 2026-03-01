@@ -104,7 +104,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => ['nullable', 'integer', 'min:0'],
             'website' => 'nullable|string|max:255',
-            'imagen_url' => $data['imagen_url'] ?? null,
+            'imagen_url' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'stock' => ['nullable', 'integer', 'min:0'],
             'id_compania' => 'required|exists:companies,id_compania',
