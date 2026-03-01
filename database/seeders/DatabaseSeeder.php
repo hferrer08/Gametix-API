@@ -43,8 +43,7 @@ class DatabaseSeeder extends Seeder
             DetallePedidoSeeder::class,
             MovimientoStockSeeder::class,
             PagosSeeder::class,
-            ResenaSeeder::class,
-            
+            ResenaSeeder::class,            
         ]);
     }
 }
